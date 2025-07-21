@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar(60) 
+  email     String   @db.VarChar(200) @unique
+  password  String   @db.VarChar(120)
+  isActive  Boolean
+  gpdr      DateTime @default(now())
+  token     String? @db.VarChar(30) 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  roleId String @db.VarChar(36)
+
+  product Product[]
+  role Role @relation(fields: [roleId], references: [id])
+}
+
+model Role {
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar(30)  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User[]
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar(60)
+  price       Decimal  @db.Decimal(10, 2)
+  isAvailable Boolean
+  createdBy   String? @db.VarChar(36)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+
+ createdByUser User? @relation(fields: [createdBy], references: [id])
+  productHasCategory ProductHasProductCategory[]
+}
+
+model ProductCategory {
+  id                        String                      @id @default(uuid())
+  name                      String                      @db.VarChar(60)
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
+  productHasProductCategory ProductHasProductCategory[]
+}
+
+model ProductHasProductCategory {
+  id                String @id @default(uuid())
+  productId         String
+  productCategoryId String
+
+  product         Product         @relation(fields: [productId], references: [id])
+  productCategory ProductCategory @relation(fields: [productCategoryId], references: [id])
+}
