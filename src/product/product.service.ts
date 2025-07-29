@@ -8,15 +8,25 @@ import { ProductDto } from './dto';
 import { QueryParamsDto, SearchQueryParamsDto } from 'src/utils/commonDtos';
 import { UserFromJwt } from 'src/utils/types';
 import { UserRoles } from 'src/utils/const';
+import { ChatService } from 'src/chat/chat.service';
 
 @Injectable()
 export class ProductService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly chatService: ChatService,
+  ) {}
 
   async create(dto: ProductDto, user: UserFromJwt) {
+    const generatedDescription =
+      await this.chatService.createProductDescription(dto.keywords);
+
     const createdProduct = await this.prisma.product.create({
       data: {
-        ...dto,
+        name: dto.name,
+        description: generatedDescription,
+        price: dto.price,
+        isAvailable: dto.isAvailable,
         createdBy: user.id,
       },
     });

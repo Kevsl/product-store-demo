@@ -38,6 +38,7 @@ model Product {
   name        String   @db.VarChar(60)
   price       Decimal  @db.Decimal(10, 2)
   isAvailable Boolean
+  description String? @db.Text()
   createdBy   String? @db.VarChar(36)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

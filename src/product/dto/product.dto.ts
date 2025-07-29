@@ -38,4 +38,8 @@ export class ProductDto {
   @IsArray()
   @IsUUID(4, { each: true })
   productCategories: string[];
+
+  @IsString()
+  @Length(5, 250)
+  keywords: string;
 }

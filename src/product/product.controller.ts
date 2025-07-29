@@ -21,6 +21,7 @@ import { ApiCookieAuth, ApiOkResponse } from '@nestjs/swagger';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @UseGuards(JwtGuard)
   @ApiOkResponse({ type: ProductDto, isArray: false })
   @Post()
   create(@Body() dto: ProductDto, @GetUser() user: UserFromJwt) {
